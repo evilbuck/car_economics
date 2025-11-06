@@ -1,0 +1,323 @@
+<div class="min-h-screen bg-gradient-to-br from-blue-50 to-indigo-100 py-12 px-4 sm:px-6 lg:px-8">
+  <div class="max-w-4xl mx-auto">
+    <!-- Header -->
+    <div class="text-center mb-8">
+      <h1 class="text-4xl font-bold text-gray-900 mb-2">MPG Calculator</h1>
+      <p class="text-lg text-gray-600">Is it worth upgrading your car for better fuel efficiency?</p>
+    </div>
+
+    <!-- Calculator Form -->
+    <div class="bg-white rounded-lg shadow-xl p-6 md:p-8">
+      <form id="mpg-calculator-form" class="space-y-8">
+
+        <!-- Current Car Section -->
+        <div class="border-b border-gray-200 pb-6">
+          <h2 class="text-2xl font-semibold text-gray-800 mb-4">Current Car</h2>
+          <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+            <div>
+              <label for="current_mpg" class="block text-sm font-medium text-gray-700 mb-2">
+                Current MPG
+              </label>
+              <input
+                type="number"
+                id="current_mpg"
+                name="current_mpg"
+                step="0.1"
+                min="0"
+                class="w-full px-4 py-2 border border-gray-300 rounded-md shadow-sm focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500"
+                placeholder="e.g., 20"
+                required
+              >
+            </div>
+
+            <div>
+              <label for="current_gas_price" class="block text-sm font-medium text-gray-700 mb-2">
+                Gas Price ($/gallon)
+              </label>
+              <input
+                type="number"
+                id="current_gas_price"
+                name="current_gas_price"
+                step="0.01"
+                min="0"
+                class="w-full px-4 py-2 border border-gray-300 rounded-md shadow-sm focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500"
+                placeholder="e.g., 3.50"
+                required
+              >
+            </div>
+
+            <div>
+              <label for="current_payment" class="block text-sm font-medium text-gray-700 mb-2">
+                Current Car Payment ($/month)
+              </label>
+              <input
+                type="number"
+                id="current_payment"
+                name="current_payment"
+                step="0.01"
+                min="0"
+                class="w-full px-4 py-2 border border-gray-300 rounded-md shadow-sm focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500"
+                placeholder="e.g., 350"
+                required
+              >
+            </div>
+
+            <div>
+              <label for="current_insurance" class="block text-sm font-medium text-gray-700 mb-2">
+                Current Insurance ($/month)
+              </label>
+              <input
+                type="number"
+                id="current_insurance"
+                name="current_insurance"
+                step="0.01"
+                min="0"
+                class="w-full px-4 py-2 border border-gray-300 rounded-md shadow-sm focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500"
+                placeholder="e.g., 150"
+                required
+              >
+            </div>
+          </div>
+        </div>
+
+        <!-- New Car Section -->
+        <div class="border-b border-gray-200 pb-6">
+          <h2 class="text-2xl font-semibold text-gray-800 mb-4">New Car</h2>
+          <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+            <div>
+              <label for="new_mpg" class="block text-sm font-medium text-gray-700 mb-2">
+                New Car MPG
+              </label>
+              <input
+                type="number"
+                id="new_mpg"
+                name="new_mpg"
+                step="0.1"
+                min="0"
+                class="w-full px-4 py-2 border border-gray-300 rounded-md shadow-sm focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500"
+                placeholder="e.g., 50"
+                required
+              >
+            </div>
+
+            <div>
+              <label for="new_gas_price" class="block text-sm font-medium text-gray-700 mb-2">
+                Gas Price ($/gallon)
+                <span class="text-xs text-gray-500">(if different octane required)</span>
+              </label>
+              <input
+                type="number"
+                id="new_gas_price"
+                name="new_gas_price"
+                step="0.01"
+                min="0"
+                class="w-full px-4 py-2 border border-gray-300 rounded-md shadow-sm focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500"
+                placeholder="e.g., 3.50"
+                required
+              >
+            </div>
+
+            <div>
+              <label for="new_payment" class="block text-sm font-medium text-gray-700 mb-2">
+                New Car Payment ($/month)
+              </label>
+              <input
+                type="number"
+                id="new_payment"
+                name="new_payment"
+                step="0.01"
+                min="0"
+                class="w-full px-4 py-2 border border-gray-300 rounded-md shadow-sm focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500"
+                placeholder="e.g., 450"
+                required
+              >
+            </div>
+
+            <div>
+              <label for="new_insurance" class="block text-sm font-medium text-gray-700 mb-2">
+                New Insurance ($/month)
+              </label>
+              <input
+                type="number"
+                id="new_insurance"
+                name="new_insurance"
+                step="0.01"
+                min="0"
+                class="w-full px-4 py-2 border border-gray-300 rounded-md shadow-sm focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500"
+                placeholder="e.g., 175"
+                required
+              >
+            </div>
+          </div>
+        </div>
+
+        <!-- Driving Habits Section -->
+        <div>
+          <h2 class="text-2xl font-semibold text-gray-800 mb-4">Your Driving Habits</h2>
+          <div>
+            <label for="miles_per_month" class="block text-sm font-medium text-gray-700 mb-2">
+              Miles Driven Per Month
+            </label>
+            <input
+              type="number"
+              id="miles_per_month"
+              name="miles_per_month"
+              step="1"
+              min="0"
+              class="w-full px-4 py-2 border border-gray-300 rounded-md shadow-sm focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500"
+              placeholder="e.g., 1000"
+              required
+            >
+          </div>
+        </div>
+
+        <!-- Calculate Button -->
+        <div class="flex justify-center">
+          <button
+            type="submit"
+            class="bg-indigo-600 hover:bg-indigo-700 text-white font-semibold py-3 px-8 rounded-lg shadow-md transition duration-200 ease-in-out transform hover:scale-105 focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:ring-offset-2"
+          >
+            Calculate Savings
+          </button>
+        </div>
+      </form>
+
+      <!-- Results Section -->
+      <div id="results" class="hidden mt-8 pt-8 border-t border-gray-200">
+        <h2 class="text-2xl font-semibold text-gray-800 mb-6 text-center">Results</h2>
+
+        <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+          <!-- Current Car Costs -->
+          <div class="bg-red-50 rounded-lg p-6 border border-red-200">
+            <h3 class="text-lg font-semibold text-red-800 mb-4">Current Car (Monthly)</h3>
+            <div class="space-y-2 text-sm">
+              <div class="flex justify-between">
+                <span class="text-gray-700">Fuel Cost:</span>
+                <span class="font-semibold text-gray-900" id="current_fuel_cost">$0.00</span>
+              </div>
+              <div class="flex justify-between">
+                <span class="text-gray-700">Car Payment:</span>
+                <span class="font-semibold text-gray-900" id="current_payment_display">$0.00</span>
+              </div>
+              <div class="flex justify-between">
+                <span class="text-gray-700">Insurance:</span>
+                <span class="font-semibold text-gray-900" id="current_insurance_display">$0.00</span>
+              </div>
+              <div class="flex justify-between pt-2 border-t border-red-300">
+                <span class="text-gray-900 font-semibold">Total:</span>
+                <span class="font-bold text-red-700 text-lg" id="current_total">$0.00</span>
+              </div>
+            </div>
+          </div>
+
+          <!-- New Car Costs -->
+          <div class="bg-green-50 rounded-lg p-6 border border-green-200">
+            <h3 class="text-lg font-semibold text-green-800 mb-4">New Car (Monthly)</h3>
+            <div class="space-y-2 text-sm">
+              <div class="flex justify-between">
+                <span class="text-gray-700">Fuel Cost:</span>
+                <span class="font-semibold text-gray-900" id="new_fuel_cost">$0.00</span>
+              </div>
+              <div class="flex justify-between">
+                <span class="text-gray-700">Car Payment:</span>
+                <span class="font-semibold text-gray-900" id="new_payment_display">$0.00</span>
+              </div>
+              <div class="flex justify-between">
+                <span class="text-gray-700">Insurance:</span>
+                <span class="font-semibold text-gray-900" id="new_insurance_display">$0.00</span>
+              </div>
+              <div class="flex justify-between pt-2 border-t border-green-300">
+                <span class="text-gray-900 font-semibold">Total:</span>
+                <span class="font-bold text-green-700 text-lg" id="new_total">$0.00</span>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- Verdict -->
+        <div id="verdict" class="mt-6 p-6 rounded-lg text-center">
+          <p class="text-2xl font-bold mb-2" id="verdict_text"></p>
+          <p class="text-lg" id="verdict_details"></p>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<script>
+document.addEventListener('DOMContentLoaded', function() {
+  const form = document.getElementById('mpg-calculator-form');
+  const resultsDiv = document.getElementById('results');
+
+  form.addEventListener('submit', function(e) {
+    e.preventDefault();
+    calculateCosts();
+  });
+
+  function calculateCosts() {
+    // Get form values
+    const currentMpg = parseFloat(document.getElementById('current_mpg').value);
+    const currentGasPrice = parseFloat(document.getElementById('current_gas_price').value);
+    const currentPayment = parseFloat(document.getElementById('current_payment').value);
+    const currentInsurance = parseFloat(document.getElementById('current_insurance').value);
+
+    const newMpg = parseFloat(document.getElementById('new_mpg').value);
+    const newGasPrice = parseFloat(document.getElementById('new_gas_price').value);
+    const newPayment = parseFloat(document.getElementById('new_payment').value);
+    const newInsurance = parseFloat(document.getElementById('new_insurance').value);
+
+    const milesPerMonth = parseFloat(document.getElementById('miles_per_month').value);
+
+    // Calculate fuel costs
+    const currentFuelCost = (milesPerMonth / currentMpg) * currentGasPrice;
+    const newFuelCost = (milesPerMonth / newMpg) * newGasPrice;
+
+    // Calculate totals
+    const currentTotal = currentFuelCost + currentPayment + currentInsurance;
+    const newTotal = newFuelCost + newPayment + newInsurance;
+
+    // Calculate difference
+    const difference = currentTotal - newTotal;
+
+    // Display results
+    document.getElementById('current_fuel_cost').textContent = `$${currentFuelCost.toFixed(2)}`;
+    document.getElementById('current_payment_display').textContent = `$${currentPayment.toFixed(2)}`;
+    document.getElementById('current_insurance_display').textContent = `$${currentInsurance.toFixed(2)}`;
+    document.getElementById('current_total').textContent = `$${currentTotal.toFixed(2)}`;
+
+    document.getElementById('new_fuel_cost').textContent = `$${newFuelCost.toFixed(2)}`;
+    document.getElementById('new_payment_display').textContent = `$${newPayment.toFixed(2)}`;
+    document.getElementById('new_insurance_display').textContent = `$${newInsurance.toFixed(2)}`;
+    document.getElementById('new_total').textContent = `$${newTotal.toFixed(2)}`;
+
+    // Display verdict
+    const verdictDiv = document.getElementById('verdict');
+    const verdictText = document.getElementById('verdict_text');
+    const verdictDetails = document.getElementById('verdict_details');
+
+    if (difference > 0) {
+      verdictDiv.className = 'mt-6 p-6 rounded-lg text-center bg-green-100 border-2 border-green-400';
+      verdictText.className = 'text-2xl font-bold mb-2 text-green-800';
+      verdictText.textContent = `You'll SAVE $${Math.abs(difference).toFixed(2)} per month! 💰`;
+      verdictDetails.className = 'text-lg text-green-700';
+      verdictDetails.textContent = `That's $${(Math.abs(difference) * 12).toFixed(2)} per year in savings.`;
+    } else if (difference < 0) {
+      verdictDiv.className = 'mt-6 p-6 rounded-lg text-center bg-red-100 border-2 border-red-400';
+      verdictText.className = 'text-2xl font-bold mb-2 text-red-800';
+      verdictText.textContent = `You'll LOSE $${Math.abs(difference).toFixed(2)} per month! ⚠️`;
+      verdictDetails.className = 'text-lg text-red-700';
+      verdictDetails.textContent = `The new car will cost you $${(Math.abs(difference) * 12).toFixed(2)} more per year.`;
+    } else {
+      verdictDiv.className = 'mt-6 p-6 rounded-lg text-center bg-gray-100 border-2 border-gray-400';
+      verdictText.className = 'text-2xl font-bold mb-2 text-gray-800';
+      verdictText.textContent = `Break Even`;
+      verdictDetails.className = 'text-lg text-gray-700';
+      verdictDetails.textContent = `Both cars cost the same per month.`;
+    }
+
+    // Show results
+    resultsDiv.classList.remove('hidden');
+    resultsDiv.scrollIntoView({ behavior: 'smooth', block: 'nearest' });
+  }
+});
+</script>
