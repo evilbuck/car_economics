@@ -1,18 +1,24 @@
 class SessionsController < ApplicationController
-  # creates a Session in the db for tracking
+  skip_before_action :verify_authenticity_token
+
+  # Session is now auto-created by SessionManagement concern
   def index
-    Session.create!(user_id: params[:user_id])
-    head :ok
+    # Session already exists via before_action :ensure_session
+    render json: { id: current_session.id }
+  end
+
+  def show
+    render json: current_session
   end
 
   def update
-    Session.find(params[:id]).update! session_params
+    current_session.update!(session_params)
     head :ok
   end
 
   private
 
   def session_params
-    params.permit(meta: { car: {} })
+    params.require(:session).permit!
   end
 end
