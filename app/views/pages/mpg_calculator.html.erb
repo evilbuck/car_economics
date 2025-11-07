@@ -205,8 +205,8 @@
           </div>
         </div>
 
-        <!-- Calculate Button -->
-        <div class="flex justify-center">
+        <!-- Calculate and Share Buttons -->
+        <div class="flex justify-center gap-4">
           <button
             type="submit"
             id="calculate-button"
@@ -291,18 +291,107 @@
 // Server-injected calculator data
 const savedCalculatorData = <%= raw @calculator_data.to_json %>;
 
+// Parse URL parameters into calculator data structure
+function parseUrlParams(urlParams) {
+  const paramMap = {
+    // Current car parameters
+    'c_mpg': 'current_car.mpg',
+    'c_gp': 'current_car.gas_price',
+    'c_pay': 'current_car.payment',
+    'c_ins': 'current_car.insurance',
+    'c_mnt': 'current_car.maintenance',
+    // New car parameters
+    'n_mpg': 'new_car.mpg',
+    'n_gp': 'new_car.gas_price',
+    'n_pay': 'new_car.payment',
+    'n_ins': 'new_car.insurance',
+    'n_mnt': 'new_car.maintenance',
+    // Driving habits
+    'miles': 'driving_habits.miles_per_month'
+  };
+
+  const data = {
+    current_car: {},
+    new_car: {},
+    driving_habits: {}
+  };
+
+  let hasData = false;
+
+  for (const [param, path] of Object.entries(paramMap)) {
+    const value = urlParams.get(param);
+    if (value !== null && value !== '') {
+      const [section, field] = path.split('.');
+      data[section][field] = parseFloat(value);
+      hasData = true;
+    }
+  }
+
+  return hasData ? data : null;
+}
+
+// Generate shareable URL with current form values
+function generateShareableUrl() {
+  const params = new URLSearchParams();
+
+  // Current car values
+  const currentMpg = document.getElementById('current_mpg').value;
+  const currentGasPrice = document.getElementById('current_gas_price').value;
+  const currentPayment = document.getElementById('current_payment').value;
+  const currentInsurance = document.getElementById('current_insurance').value;
+  const currentMaintenance = document.getElementById('current_maintenance').value;
+
+  // New car values
+  const newMpg = document.getElementById('new_mpg').value;
+  const newGasPrice = document.getElementById('new_gas_price').value;
+  const newPayment = document.getElementById('new_payment').value;
+  const newInsurance = document.getElementById('new_insurance').value;
+  const newMaintenance = document.getElementById('new_maintenance').value;
+
+  // Driving habits
+  const milesPerMonth = document.getElementById('miles_per_month').value;
+
+  // Add parameters if they have values
+  if (currentMpg) params.set('c_mpg', currentMpg);
+  if (currentGasPrice) params.set('c_gp', currentGasPrice);
+  if (currentPayment) params.set('c_pay', currentPayment);
+  if (currentInsurance) params.set('c_ins', currentInsurance);
+  if (currentMaintenance) params.set('c_mnt', currentMaintenance);
+
+  if (newMpg) params.set('n_mpg', newMpg);
+  if (newGasPrice) params.set('n_gp', newGasPrice);
+  if (newPayment) params.set('n_pay', newPayment);
+  if (newInsurance) params.set('n_ins', newInsurance);
+  if (newMaintenance) params.set('n_mnt', newMaintenance);
+
+  if (milesPerMonth) params.set('miles', milesPerMonth);
+
+  // Generate full URL with parameters
+  const baseUrl = window.location.origin + window.location.pathname;
+  return baseUrl + '?' + params.toString();
+}
+
 document.addEventListener('DOMContentLoaded', function() {
   const form = document.getElementById('mpg-calculator-form');
   const resultsDiv = document.getElementById('results');
   const calculateButton = document.getElementById('calculate-button');
+  const shareButton = document.getElementById('share-button');
+  const shareFeedback = document.getElementById('share-feedback');
 
   // Track form state
   let resultsDisplayed = false;
   let lastCalculatedValues = null;
 
-  // Pre-populate form with saved data
-  if (savedCalculatorData && Object.keys(savedCalculatorData).length > 0) {
-    populateFormFields(savedCalculatorData);
+  // Parse URL parameters for form prepopulation
+  const urlParams = new URLSearchParams(window.location.search);
+  const urlData = parseUrlParams(urlParams);
+
+  // Priority: URL params > saved session data
+  const dataToUse = (urlData && Object.keys(urlData).length > 0) ? urlData : savedCalculatorData;
+
+  // Pre-populate form with URL params or saved data
+  if (dataToUse && Object.keys(dataToUse).length > 0) {
+    populateFormFields(dataToUse);
 
     // Auto-calculate if all fields are populated
     if (form.checkValidity()) {
@@ -315,8 +404,37 @@ document.addEventListener('DOMContentLoaded', function() {
   formInputs.forEach(input => {
     input.addEventListener('input', function() {
       checkFormState();
+      updateShareButtonState();
     });
   });
+
+  // Share button click handler
+  shareButton.addEventListener('click', async function() {
+    try {
+      const shareableUrl = generateShareableUrl();
+      await navigator.clipboard.writeText(shareableUrl);
+
+      // Show feedback
+      shareFeedback.classList.remove('hidden');
+
+      // Hide feedback after 3 seconds
+      setTimeout(() => {
+        shareFeedback.classList.add('hidden');
+      }, 3000);
+    } catch (error) {
+      console.error('Failed to copy URL to clipboard:', error);
+      alert('Failed to copy link. Please try again.');
+    }
+  });
+
+  // Enable share button when form has valid values
+  function updateShareButtonState() {
+    const hasAllValues = form.checkValidity();
+    shareButton.disabled = !hasAllValues;
+  }
+
+  // Initialize share button state
+  updateShareButtonState();
 
   form.addEventListener('submit', async function(e) {
     e.preventDefault();
@@ -607,6 +725,11 @@ document.addEventListener('DOMContentLoaded', function() {
     // Mark results as displayed and update button state
     resultsDisplayed = true;
     checkFormState();
+
+    // Update URL with current form values for easy sharing
+    const shareableUrl = generateShareableUrl();
+    const urlParams = new URLSearchParams(new URL(shareableUrl).search);
+    window.history.replaceState({}, '', '?' + urlParams.toString());
   }
 });
 </script>
