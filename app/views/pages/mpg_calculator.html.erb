@@ -77,6 +77,22 @@
                 required
               >
             </div>
+
+            <div>
+              <label for="current_maintenance" class="block text-sm font-medium text-gray-700 mb-2">
+                Current Maintenance & Repair ($/year)
+              </label>
+              <input
+                type="number"
+                id="current_maintenance"
+                name="current_maintenance"
+                step="0.01"
+                min="0"
+                class="w-full px-4 py-2 border border-gray-300 rounded-md shadow-sm focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500"
+                placeholder="e.g., 2500"
+                required
+              >
+            </div>
           </div>
         </div>
 
@@ -148,6 +164,22 @@
                 required
               >
             </div>
+
+            <div>
+              <label for="new_maintenance" class="block text-sm font-medium text-gray-700 mb-2">
+                New Maintenance & Repair ($/year)
+              </label>
+              <input
+                type="number"
+                id="new_maintenance"
+                name="new_maintenance"
+                step="0.01"
+                min="0"
+                class="w-full px-4 py-2 border border-gray-300 rounded-md shadow-sm focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500"
+                placeholder="e.g., 900"
+                required
+              >
+            </div>
           </div>
         </div>
 
@@ -203,6 +235,10 @@
                 <span class="text-gray-700">Insurance:</span>
                 <span class="font-semibold text-gray-900" id="current_insurance_display">$0.00</span>
               </div>
+              <div class="flex justify-between">
+                <span class="text-gray-700">Maintenance & Repair:</span>
+                <span class="font-semibold text-gray-900" id="current_maintenance_display">$0.00</span>
+              </div>
               <div class="flex justify-between pt-2 border-t border-red-300">
                 <span class="text-gray-900 font-semibold">Total:</span>
                 <span class="font-bold text-red-700 text-lg" id="current_total">$0.00</span>
@@ -225,6 +261,10 @@
               <div class="flex justify-between">
                 <span class="text-gray-700">Insurance:</span>
                 <span class="font-semibold text-gray-900" id="new_insurance_display">$0.00</span>
+              </div>
+              <div class="flex justify-between">
+                <span class="text-gray-700">Maintenance & Repair:</span>
+                <span class="font-semibold text-gray-900" id="new_maintenance_display">$0.00</span>
               </div>
               <div class="flex justify-between pt-2 border-t border-green-300">
                 <span class="text-gray-900 font-semibold">Total:</span>
@@ -279,6 +319,7 @@ document.addEventListener('DOMContentLoaded', function() {
       document.getElementById('current_gas_price').value = data.current_car.gas_price ?? '';
       document.getElementById('current_payment').value = data.current_car.payment ?? '';
       document.getElementById('current_insurance').value = data.current_car.insurance ?? '';
+      document.getElementById('current_maintenance').value = data.current_car.maintenance ?? '';
     }
 
     // Populate new car fields
@@ -287,6 +328,7 @@ document.addEventListener('DOMContentLoaded', function() {
       document.getElementById('new_gas_price').value = data.new_car.gas_price ?? '';
       document.getElementById('new_payment').value = data.new_car.payment ?? '';
       document.getElementById('new_insurance').value = data.new_car.insurance ?? '';
+      document.getElementById('new_maintenance').value = data.new_car.maintenance ?? '';
     }
 
     // Populate driving habits fields
@@ -304,13 +346,15 @@ document.addEventListener('DOMContentLoaded', function() {
               mpg: parseFloat(formData.current_mpg),
               gas_price: parseFloat(formData.current_gas_price),
               payment: parseFloat(formData.current_payment),
-              insurance: parseFloat(formData.current_insurance)
+              insurance: parseFloat(formData.current_insurance),
+              maintenance: parseFloat(formData.current_maintenance)
             },
             new_car: {
               mpg: parseFloat(formData.new_mpg),
               gas_price: parseFloat(formData.new_gas_price),
               payment: parseFloat(formData.new_payment),
-              insurance: parseFloat(formData.new_insurance)
+              insurance: parseFloat(formData.new_insurance),
+              maintenance: parseFloat(formData.new_maintenance)
             },
             driving_habits: {
               miles_per_month: parseInt(formData.miles_per_month)
@@ -361,11 +405,13 @@ document.addEventListener('DOMContentLoaded', function() {
     const currentGasPrice = parseFloat(document.getElementById('current_gas_price').value);
     const currentPayment = parseFloat(document.getElementById('current_payment').value);
     const currentInsurance = parseFloat(document.getElementById('current_insurance').value);
+    const currentMaintenanceAnnual = parseFloat(document.getElementById('current_maintenance').value);
 
     const newMpg = parseFloat(document.getElementById('new_mpg').value);
     const newGasPrice = parseFloat(document.getElementById('new_gas_price').value);
     const newPayment = parseFloat(document.getElementById('new_payment').value);
     const newInsurance = parseFloat(document.getElementById('new_insurance').value);
+    const newMaintenanceAnnual = parseFloat(document.getElementById('new_maintenance').value);
 
     const milesPerMonth = parseFloat(document.getElementById('miles_per_month').value);
 
@@ -373,9 +419,13 @@ document.addEventListener('DOMContentLoaded', function() {
     const currentFuelCost = (milesPerMonth / currentMpg) * currentGasPrice;
     const newFuelCost = (milesPerMonth / newMpg) * newGasPrice;
 
+    // Convert annual maintenance to monthly
+    const currentMaintenance = currentMaintenanceAnnual / 12;
+    const newMaintenance = newMaintenanceAnnual / 12;
+
     // Calculate totals
-    const currentTotal = currentFuelCost + currentPayment + currentInsurance;
-    const newTotal = newFuelCost + newPayment + newInsurance;
+    const currentTotal = currentFuelCost + currentPayment + currentInsurance + currentMaintenance;
+    const newTotal = newFuelCost + newPayment + newInsurance + newMaintenance;
 
     // Calculate difference
     const difference = currentTotal - newTotal;
@@ -384,11 +434,13 @@ document.addEventListener('DOMContentLoaded', function() {
     document.getElementById('current_fuel_cost').textContent = `$${currentFuelCost.toFixed(2)}`;
     document.getElementById('current_payment_display').textContent = `$${currentPayment.toFixed(2)}`;
     document.getElementById('current_insurance_display').textContent = `$${currentInsurance.toFixed(2)}`;
+    document.getElementById('current_maintenance_display').textContent = `$${currentMaintenance.toFixed(2)}`;
     document.getElementById('current_total').textContent = `$${currentTotal.toFixed(2)}`;
 
     document.getElementById('new_fuel_cost').textContent = `$${newFuelCost.toFixed(2)}`;
     document.getElementById('new_payment_display').textContent = `$${newPayment.toFixed(2)}`;
     document.getElementById('new_insurance_display').textContent = `$${newInsurance.toFixed(2)}`;
+    document.getElementById('new_maintenance_display').textContent = `$${newMaintenance.toFixed(2)}`;
     document.getElementById('new_total').textContent = `$${newTotal.toFixed(2)}`;
 
     // Display verdict
