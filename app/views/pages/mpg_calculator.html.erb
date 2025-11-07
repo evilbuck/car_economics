@@ -3,7 +3,8 @@
     <!-- Header -->
     <div class="text-center mb-8">
       <h1 class="text-4xl font-bold text-gray-900 mb-2">MPG Calculator</h1>
-      <p class="text-lg text-gray-600">Is it worth upgrading your car for better fuel efficiency?</p>
+      <p class="text-lg text-gray-600">Is it worth upgrading your car to save money on repairs and gas?</p>
+      <p class="text-lg text-gray-600">Find out if it's actually worth it, or if you're just trying to justify your wants.</p>
     </div>
 
     <!-- Calculator Form -->
@@ -136,8 +137,8 @@
             <div>
               <label for="new_payment" class="block text-sm font-medium text-gray-700 mb-2">
                 New Car Payment ($/month)
-                <span id="new_total_cost_estimate"></span>
               </label>
+              <span id="new_total_cost_estimate" class="block text-xs text-gray-500 mb-1 italic"></span>
               <input
                 type="number"
                 id="new_payment"
@@ -414,6 +415,9 @@ document.addEventListener('DOMContentLoaded', function() {
     }
   }
 
+  const global_rate = 7.5;
+  const global_term = 60;
+
   /**
     * Calculate the total cost of the car based on the term (in months) and the monthly amount
    * considering the interest rate. The interest should be compounded monthly
@@ -425,7 +429,7 @@ document.addEventListener('DOMContentLoaded', function() {
    * @param {number} rate - Annual interest rate as percentage (default: 7.5)
    * @returns {number} Estimated principal/car cost in dollars
    */
-  function estimateCarCost(monthly_amount, term=60, rate=7.5) {
+  function estimateCarCost(monthly_amount, term=global_term, rate=global_rate) {
     // Convert annual percentage rate to monthly decimal rate
     const monthlyRate = rate / 12 / 100;
 
@@ -448,7 +452,7 @@ document.addEventListener('DOMContentLoaded', function() {
     if (value <= 0) return;
 
     let total_cost = Math.round(estimateCarCost(value));
-    let total_cost_fmt = `$${total_cost.toLocaleString('en-US')}`;
+    let total_cost_fmt = `$${total_cost.toLocaleString('en-US')} estimated total (${global_term}mos @ %${global_rate})`;
 
     document.querySelector('#new_total_cost_estimate').innerText = total_cost_fmt;
   }
