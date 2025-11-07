@@ -245,12 +245,22 @@
 </div>
 
 <script>
-document.addEventListener('DOMContentLoaded', async function() {
+// Server-injected calculator data
+const savedCalculatorData = <%= raw @calculator_data.to_json %>;
+
+document.addEventListener('DOMContentLoaded', function() {
   const form = document.getElementById('mpg-calculator-form');
   const resultsDiv = document.getElementById('results');
 
-  // Load saved calculator data on page load
-  await loadSavedCalculatorData();
+  // Pre-populate form with saved data
+  if (savedCalculatorData && Object.keys(savedCalculatorData).length > 0) {
+    populateFormFields(savedCalculatorData);
+
+    // Auto-calculate if all fields are populated
+    if (form.checkValidity()) {
+      calculateCosts();
+    }
+  }
 
   form.addEventListener('submit', async function(e) {
     e.preventDefault();
@@ -261,6 +271,29 @@ document.addEventListener('DOMContentLoaded', async function() {
     const formObject = Object.fromEntries(formData);
     await saveCalculatorData(formObject);
   });
+
+  function populateFormFields(data) {
+    // Populate current car fields
+    if (data.current_car) {
+      document.getElementById('current_mpg').value = data.current_car.mpg ?? '';
+      document.getElementById('current_gas_price').value = data.current_car.gas_price ?? '';
+      document.getElementById('current_payment').value = data.current_car.payment ?? '';
+      document.getElementById('current_insurance').value = data.current_car.insurance ?? '';
+    }
+
+    // Populate new car fields
+    if (data.new_car) {
+      document.getElementById('new_mpg').value = data.new_car.mpg ?? '';
+      document.getElementById('new_gas_price').value = data.new_car.gas_price ?? '';
+      document.getElementById('new_payment').value = data.new_car.payment ?? '';
+      document.getElementById('new_insurance').value = data.new_car.insurance ?? '';
+    }
+
+    // Populate driving habits fields
+    if (data.driving_habits) {
+      document.getElementById('miles_per_month').value = data.driving_habits.miles_per_month ?? '';
+    }
+  }
 
   async function saveCalculatorData(formData) {
     const metaPayload = {
@@ -320,64 +353,6 @@ document.addEventListener('DOMContentLoaded', async function() {
     } catch (error) {
       console.error('Failed to save calculator data:', error);
     }
-  }
-
-  async function loadSavedCalculatorData() {
-    try {
-      // Get session ID from index endpoint
-      const indexResponse = await fetch('/sessions', {
-        method: 'GET',
-        headers: { 'Accept': 'application/json' }
-      });
-
-      if (!indexResponse.ok) return;
-
-      const sessionData = await indexResponse.json();
-      const sessionId = sessionData.id;
-
-      // Fetch full session data using the actual session ID
-      const response = await fetch(`/sessions/${sessionId}`, {
-        method: 'GET',
-        headers: { 'Accept': 'application/json' }
-      });
-
-      if (response.ok) {
-        const session = await response.json();
-        const data = session.meta?.mpg_calculator;
-
-        if (data && Object.keys(data).length > 0) {
-          // Populate form fields with saved data
-          if (data.current_car) {
-            document.getElementById('current_mpg').value = data.current_car.mpg || '';
-            document.getElementById('current_gas_price').value = data.current_car.gas_price || '';
-            document.getElementById('current_payment').value = data.current_car.payment || '';
-            document.getElementById('current_insurance').value = data.current_car.insurance || '';
-          }
-
-          if (data.new_car) {
-            document.getElementById('new_mpg').value = data.new_car.mpg || '';
-            document.getElementById('new_gas_price').value = data.new_car.gas_price || '';
-            document.getElementById('new_payment').value = data.new_car.payment || '';
-            document.getElementById('new_insurance').value = data.new_car.insurance || '';
-          }
-
-          if (data.driving_habits) {
-            document.getElementById('miles_per_month').value = data.driving_habits.miles_per_month || '';
-          }
-
-          // Auto-calculate if all fields are populated
-          if (isFormComplete()) {
-            calculateCosts();
-          }
-        }
-      }
-    } catch (error) {
-      console.error('Failed to load saved calculator data:', error);
-    }
-  }
-
-  function isFormComplete() {
-    return form.checkValidity();
   }
 
   function calculateCosts() {
