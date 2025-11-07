@@ -208,6 +208,7 @@
         <div class="flex justify-center">
           <button
             type="submit"
+            id="calculate-button"
             class="bg-indigo-600 hover:bg-indigo-700 text-white font-semibold py-3 px-8 rounded-lg shadow-md transition duration-200 ease-in-out transform hover:scale-105 focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:ring-offset-2"
           >
             Calculate Savings
@@ -292,6 +293,11 @@ const savedCalculatorData = <%= raw @calculator_data.to_json %>;
 document.addEventListener('DOMContentLoaded', function() {
   const form = document.getElementById('mpg-calculator-form');
   const resultsDiv = document.getElementById('results');
+  const calculateButton = document.getElementById('calculate-button');
+
+  // Track form state
+  let resultsDisplayed = false;
+  let lastCalculatedValues = null;
 
   // Pre-populate form with saved data
   if (savedCalculatorData && Object.keys(savedCalculatorData).length > 0) {
@@ -302,6 +308,14 @@ document.addEventListener('DOMContentLoaded', function() {
       calculateCosts();
     }
   }
+
+  // Add input listeners to all form fields to detect changes
+  const formInputs = form.querySelectorAll('input[type="number"]');
+  formInputs.forEach(input => {
+    input.addEventListener('input', function() {
+      checkFormState();
+    });
+  });
 
   form.addEventListener('submit', async function(e) {
     e.preventDefault();
@@ -434,7 +448,7 @@ document.addEventListener('DOMContentLoaded', function() {
     if (value <= 0) return;
 
     let total_cost = Math.round(estimateCarCost(value));
-    let total_cost_fmt = `$${total_cost}`;
+    let total_cost_fmt = `$${total_cost.toLocaleString('en-US')}`;
 
     document.querySelector('#new_total_cost_estimate').innerText = total_cost_fmt;
   }
@@ -446,6 +460,57 @@ document.addEventListener('DOMContentLoaded', function() {
 
     updateTotalCostEstimate(value);
   });
+
+  function checkFormState() {
+    if (!resultsDisplayed || !lastCalculatedValues) {
+      // No results displayed yet, keep button enabled
+      enableButton();
+      return;
+    }
+
+    // Get current form values
+    const currentValues = {
+      current_mpg: parseFloat(document.getElementById('current_mpg').value) || 0,
+      current_gas_price: parseFloat(document.getElementById('current_gas_price').value) || 0,
+      current_payment: parseFloat(document.getElementById('current_payment').value) || 0,
+      current_insurance: parseFloat(document.getElementById('current_insurance').value) || 0,
+      current_maintenance: parseFloat(document.getElementById('current_maintenance').value) || 0,
+      new_mpg: parseFloat(document.getElementById('new_mpg').value) || 0,
+      new_gas_price: parseFloat(document.getElementById('new_gas_price').value) || 0,
+      new_payment: parseFloat(document.getElementById('new_payment').value) || 0,
+      new_insurance: parseFloat(document.getElementById('new_insurance').value) || 0,
+      new_maintenance: parseFloat(document.getElementById('new_maintenance').value) || 0,
+      miles_per_month: parseFloat(document.getElementById('miles_per_month').value) || 0
+    };
+
+    // Compare current values with last calculated values
+    const valuesMatch = Object.keys(currentValues).every(key => {
+      return currentValues[key] === lastCalculatedValues[key];
+    });
+
+    // Disable button if values match (results are current), enable if they don't match
+    if (valuesMatch) {
+      disableButton();
+    } else {
+      enableButton();
+    }
+  }
+
+  function disableButton() {
+    calculateButton.disabled = true;
+    calculateButton.classList.remove('bg-indigo-600', 'hover:bg-indigo-700', 'hover:scale-105');
+    calculateButton.classList.add('bg-gray-500', 'cursor-not-allowed');
+    calculateButton.style.backgroundColor = '#6b7280'; // gray-500
+    calculateButton.style.opacity = '0.8';
+  }
+
+  function enableButton() {
+    calculateButton.disabled = false;
+    calculateButton.classList.remove('bg-gray-500', 'cursor-not-allowed');
+    calculateButton.classList.add('bg-indigo-600', 'hover:bg-indigo-700', 'hover:scale-105');
+    calculateButton.style.backgroundColor = '';
+    calculateButton.style.opacity = '';
+  }
 
   function calculateCosts() {
     // Get form values
@@ -462,6 +527,21 @@ document.addEventListener('DOMContentLoaded', function() {
     const newMaintenanceAnnual = parseFloat(document.getElementById('new_maintenance').value);
 
     const milesPerMonth = parseFloat(document.getElementById('miles_per_month').value);
+
+    // Store the calculated values for comparison
+    lastCalculatedValues = {
+      current_mpg: currentMpg,
+      current_gas_price: currentGasPrice,
+      current_payment: currentPayment,
+      current_insurance: currentInsurance,
+      current_maintenance: currentMaintenanceAnnual,
+      new_mpg: newMpg,
+      new_gas_price: newGasPrice,
+      new_payment: newPayment,
+      new_insurance: newInsurance,
+      new_maintenance: newMaintenanceAnnual,
+      miles_per_month: milesPerMonth
+    };
 
     // Calculate fuel costs
     const currentFuelCost = (milesPerMonth / currentMpg) * currentGasPrice;
@@ -505,9 +585,9 @@ document.addEventListener('DOMContentLoaded', function() {
     } else if (difference < 0) {
       verdictDiv.className = 'mt-6 p-6 rounded-lg text-center bg-red-100 border-2 border-red-400';
       verdictText.className = 'text-2xl font-bold mb-2 text-red-800';
-      verdictText.textContent = `You'll LOSE $${Math.abs(difference).toFixed(2)} per month! ⚠️`;
+      verdictText.textContent = `You'll LOSE $${Math.abs(difference).toFixed(2).toLocaleString('en-US')} per month! ⚠️`;
       verdictDetails.className = 'text-lg text-red-700';
-      verdictDetails.textContent = `The new car will cost you $${(Math.abs(difference) * 12).toFixed(2)} more per year.`;
+      verdictDetails.textContent = `The new car will cost you $${(Math.abs(difference) * 12).toFixed(2).toLocaleString('en-US')} more per year.`;
     } else {
       verdictDiv.className = 'mt-6 p-6 rounded-lg text-center bg-gray-100 border-2 border-gray-400';
       verdictText.className = 'text-2xl font-bold mb-2 text-gray-800';
@@ -519,6 +599,10 @@ document.addEventListener('DOMContentLoaded', function() {
     // Show results
     resultsDiv.classList.remove('hidden');
     resultsDiv.scrollIntoView({ behavior: 'smooth', block: 'nearest' });
+
+    // Mark results as displayed and update button state
+    resultsDisplayed = true;
+    checkFormState();
   }
 });
 </script>
