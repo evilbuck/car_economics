@@ -7,6 +7,8 @@ Rails.application.routes.draw do
 
   get "p/:page_name" => "pages#get_page_by_name", as: :page_name
 
+  resources :sessions, only: [:index, :update]
+
   # Render dynamic PWA files from app/views/pwa/* (remember to link manifest in application.html.erb)
   # get "manifest" => "rails/pwa#manifest", as: :pwa_manifest
   # get "service-worker" => "rails/pwa#service_worker", as: :pwa_service_worker
