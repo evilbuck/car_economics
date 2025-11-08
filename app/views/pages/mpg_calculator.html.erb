@@ -94,6 +94,22 @@
                 required
               >
             </div>
+
+            <div>
+              <label for="current_trade_in" class="block text-sm font-medium text-gray-700 mb-2">
+                Estimated Trade-In/Sale Price ($)
+              </label>
+              <input
+                type="number"
+                id="current_trade_in"
+                name="current_trade_in"
+                step="0.01"
+                min="0"
+                class="w-full px-4 py-2 border border-gray-300 rounded-md shadow-sm focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500"
+                placeholder="e.g., 5000"
+                value="0"
+              >
+            </div>
           </div>
         </div>
 
@@ -300,6 +316,7 @@ function parseUrlParams(urlParams) {
     'c_pay': 'current_car.payment',
     'c_ins': 'current_car.insurance',
     'c_mnt': 'current_car.maintenance',
+    'c_trade': 'current_car.trade_in',
     // New car parameters
     'n_mpg': 'new_car.mpg',
     'n_gp': 'new_car.gas_price',
@@ -340,6 +357,7 @@ function generateShareableUrl() {
   const currentPayment = document.getElementById('current_payment').value;
   const currentInsurance = document.getElementById('current_insurance').value;
   const currentMaintenance = document.getElementById('current_maintenance').value;
+  const currentTradeIn = document.getElementById('current_trade_in').value;
 
   // New car values
   const newMpg = document.getElementById('new_mpg').value;
@@ -357,6 +375,7 @@ function generateShareableUrl() {
   if (currentPayment) params.set('c_pay', currentPayment);
   if (currentInsurance) params.set('c_ins', currentInsurance);
   if (currentMaintenance) params.set('c_mnt', currentMaintenance);
+  if (currentTradeIn) params.set('c_trade', currentTradeIn);
 
   if (newMpg) params.set('n_mpg', newMpg);
   if (newGasPrice) params.set('n_gp', newGasPrice);
@@ -426,6 +445,7 @@ document.addEventListener('DOMContentLoaded', function() {
       document.getElementById('current_payment').value = data.current_car.payment ?? '';
       document.getElementById('current_insurance').value = data.current_car.insurance ?? '';
       document.getElementById('current_maintenance').value = data.current_car.maintenance ?? '';
+      document.getElementById('current_trade_in').value = data.current_car.trade_in ?? '0';
     }
 
     // Populate new car fields
@@ -453,7 +473,8 @@ document.addEventListener('DOMContentLoaded', function() {
               gas_price: parseFloat(formData.current_gas_price),
               payment: parseFloat(formData.current_payment),
               insurance: parseFloat(formData.current_insurance),
-              maintenance: parseFloat(formData.current_maintenance)
+              maintenance: parseFloat(formData.current_maintenance),
+              trade_in: parseFloat(formData.current_trade_in) || 0
             },
             new_car: {
               mpg: parseFloat(formData.new_mpg),
@@ -535,6 +556,33 @@ document.addEventListener('DOMContentLoaded', function() {
     return presentValue;
   }
 
+  /**
+   * Calculate the monthly payment based on the principal (car cost)
+   * considering the interest rate and loan term.
+   *
+   * Uses payment formula: PMT = PV * (r / (1 - (1 + r)^-n))
+   *
+   * @param {number} principal - Principal/car cost in dollars
+   * @param {number} term - Loan term in months (default: 60)
+   * @param {number} rate - Annual interest rate as percentage (default: 7.5)
+   * @returns {number} Monthly payment amount in dollars
+   */
+  function calculateMonthlyPayment(principal, term=global_term, rate=global_rate) {
+    // Convert annual percentage rate to monthly decimal rate
+    const monthlyRate = rate / 12 / 100;
+
+    // Handle edge case of 0% interest
+    if (monthlyRate === 0) {
+      return principal / term;
+    }
+
+    // Calculate monthly payment
+    // PMT = PV * (r / (1 - (1 + r)^-n))
+    const monthlyPayment = principal * (monthlyRate / (1 - Math.pow(1 + monthlyRate, -term)));
+
+    return monthlyPayment;
+  }
+
   // update cost estimate when monthly payment changes
   const new_payment_input = document.querySelector('#new_payment');
 
@@ -569,6 +617,7 @@ document.addEventListener('DOMContentLoaded', function() {
       current_payment: parseFloat(document.getElementById('current_payment').value) || 0,
       current_insurance: parseFloat(document.getElementById('current_insurance').value) || 0,
       current_maintenance: parseFloat(document.getElementById('current_maintenance').value) || 0,
+      current_trade_in: parseFloat(document.getElementById('current_trade_in').value) || 0,
       new_mpg: parseFloat(document.getElementById('new_mpg').value) || 0,
       new_gas_price: parseFloat(document.getElementById('new_gas_price').value) || 0,
       new_payment: parseFloat(document.getElementById('new_payment').value) || 0,
@@ -613,6 +662,7 @@ document.addEventListener('DOMContentLoaded', function() {
     const currentPayment = parseFloat(document.getElementById('current_payment').value);
     const currentInsurance = parseFloat(document.getElementById('current_insurance').value);
     const currentMaintenanceAnnual = parseFloat(document.getElementById('current_maintenance').value);
+    const currentTradeIn = parseFloat(document.getElementById('current_trade_in').value) || 0;
 
     const newMpg = parseFloat(document.getElementById('new_mpg').value);
     const newGasPrice = parseFloat(document.getElementById('new_gas_price').value);
@@ -622,6 +672,14 @@ document.addEventListener('DOMContentLoaded', function() {
 
     const milesPerMonth = parseFloat(document.getElementById('miles_per_month').value);
 
+    // Calculate adjusted new car payment based on trade-in
+    // First estimate the new car's total cost from the payment
+    const newCarCost = estimateCarCost(newPayment);
+    // Subtract trade-in value from principal
+    const adjustedPrincipal = newCarCost - currentTradeIn;
+    // Calculate new monthly payment based on reduced principal
+    const adjustedNewPayment = adjustedPrincipal > 0 ? calculateMonthlyPayment(adjustedPrincipal) : 0;
+
     // Store the calculated values for comparison
     lastCalculatedValues = {
       current_mpg: currentMpg,
@@ -629,6 +687,7 @@ document.addEventListener('DOMContentLoaded', function() {
       current_payment: currentPayment,
       current_insurance: currentInsurance,
       current_maintenance: currentMaintenanceAnnual,
+      current_trade_in: currentTradeIn,
       new_mpg: newMpg,
       new_gas_price: newGasPrice,
       new_payment: newPayment,
@@ -645,9 +704,9 @@ document.addEventListener('DOMContentLoaded', function() {
     const currentMaintenance = currentMaintenanceAnnual / 12;
     const newMaintenance = newMaintenanceAnnual / 12;
 
-    // Calculate totals
+    // Calculate totals (use adjusted payment for new car)
     const currentTotal = currentFuelCost + currentPayment + currentInsurance + currentMaintenance;
-    const newTotal = newFuelCost + newPayment + newInsurance + newMaintenance;
+    const newTotal = newFuelCost + adjustedNewPayment + newInsurance + newMaintenance;
 
     // Calculate difference
     const difference = currentTotal - newTotal;
@@ -660,7 +719,7 @@ document.addEventListener('DOMContentLoaded', function() {
     document.getElementById('current_total').textContent = `$${currentTotal.toFixed(2)}`;
 
     document.getElementById('new_fuel_cost').textContent = `$${newFuelCost.toFixed(2)}`;
-    document.getElementById('new_payment_display').textContent = `$${newPayment.toFixed(2)}`;
+    document.getElementById('new_payment_display').textContent = `$${adjustedNewPayment.toFixed(2)}`;
     document.getElementById('new_insurance_display').textContent = `$${newInsurance.toFixed(2)}`;
     document.getElementById('new_maintenance_display').textContent = `$${newMaintenance.toFixed(2)}`;
     document.getElementById('new_total').textContent = `$${newTotal.toFixed(2)}`;
