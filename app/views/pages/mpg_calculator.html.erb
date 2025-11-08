@@ -268,6 +268,24 @@
           <!-- New Car Costs -->
           <div class="bg-green-50 rounded-lg p-6 border border-green-200">
             <h3 class="text-lg font-semibold text-green-800 mb-4">New Car (Monthly)</h3>
+
+            <!-- Trade-in Breakdown (shown only if trade-in > 0) -->
+            <div id="trade_in_breakdown" class="mb-4 p-3 bg-blue-50 border border-blue-200 rounded text-sm space-y-1 hidden">
+              <div class="font-semibold text-blue-800 mb-2">Payment Calculation:</div>
+              <div class="flex justify-between text-gray-700">
+                <span>New Car Cost:</span>
+                <span id="new_car_cost_display">$0.00</span>
+              </div>
+              <div class="flex justify-between text-gray-700">
+                <span>Trade-In Value:</span>
+                <span id="trade_in_value_display" class="text-blue-600">-$0.00</span>
+              </div>
+              <div class="flex justify-between font-semibold text-gray-900 pt-1 border-t border-blue-300">
+                <span>Amount Financed:</span>
+                <span id="principal_financed_display">$0.00</span>
+              </div>
+            </div>
+
             <div class="space-y-2 text-sm">
               <div class="flex justify-between">
                 <span class="text-gray-700">Fuel Cost:</span>
@@ -306,6 +324,37 @@
 <script>
 // Server-injected calculator data
 const savedCalculatorData = <%= raw @calculator_data.to_json %>;
+
+const global_rate = 7.5;
+const global_term = 60;
+
+/**
+  * Calculate the total cost of the car based on the term (in months) and the monthly amount
+  * considering the interest rate. The interest should be compounded monthly
+  *
+  * Uses present value formula: PV = PMT * ((1 - (1 + r)^-n) / r)
+  *
+  * @param {number} monthly_amount - Monthly payment amount in dollars
+  * @param {number} term - Loan term in months (default: 60)
+  * @param {number} rate - Annual interest rate as percentage (default: 7.5)
+  * @returns {number} Estimated principal/car cost in dollars
+  */
+const estimateCarCost = function(monthly_amount, term=global_term, rate=global_rate) {
+// function estimateCarCost(monthly_amount, term=global_term, rate=global_rate) {
+  // Convert annual percentage rate to monthly decimal rate
+  const monthlyRate = rate / 12 / 100;
+
+  // Handle edge case of 0% interest
+  if (monthlyRate === 0) {
+    return monthly_amount * term;
+  }
+
+  // Calculate present value (principal amount)
+  // PV = PMT * ((1 - (1 + r)^-n) / r)
+  const presentValue = monthly_amount * ((1 - Math.pow(1 + monthlyRate, -term)) / monthlyRate);
+
+  return presentValue;
+}
 
 // Parse URL parameters into calculator data structure
 function parseUrlParams(urlParams) {
@@ -526,35 +575,6 @@ document.addEventListener('DOMContentLoaded', function() {
     }
   }
 
-  const global_rate = 7.5;
-  const global_term = 60;
-
-  /**
-    * Calculate the total cost of the car based on the term (in months) and the monthly amount
-   * considering the interest rate. The interest should be compounded monthly
-   *
-   * Uses present value formula: PV = PMT * ((1 - (1 + r)^-n) / r)
-   *
-   * @param {number} monthly_amount - Monthly payment amount in dollars
-   * @param {number} term - Loan term in months (default: 60)
-   * @param {number} rate - Annual interest rate as percentage (default: 7.5)
-   * @returns {number} Estimated principal/car cost in dollars
-   */
-  function estimateCarCost(monthly_amount, term=global_term, rate=global_rate) {
-    // Convert annual percentage rate to monthly decimal rate
-    const monthlyRate = rate / 12 / 100;
-
-    // Handle edge case of 0% interest
-    if (monthlyRate === 0) {
-      return monthly_amount * term;
-    }
-
-    // Calculate present value (principal amount)
-    // PV = PMT * ((1 - (1 + r)^-n) / r)
-    const presentValue = monthly_amount * ((1 - Math.pow(1 + monthlyRate, -term)) / monthlyRate);
-
-    return presentValue;
-  }
 
   /**
    * Calculate the monthly payment based on the principal (car cost)
@@ -723,6 +743,17 @@ document.addEventListener('DOMContentLoaded', function() {
     document.getElementById('new_insurance_display').textContent = `$${newInsurance.toFixed(2)}`;
     document.getElementById('new_maintenance_display').textContent = `$${newMaintenance.toFixed(2)}`;
     document.getElementById('new_total').textContent = `$${newTotal.toFixed(2)}`;
+
+    // Display trade-in breakdown if there's a trade-in value
+    const tradeInBreakdown = document.getElementById('trade_in_breakdown');
+    if (currentTradeIn > 0) {
+      tradeInBreakdown.classList.remove('hidden');
+      document.getElementById('new_car_cost_display').textContent = `$${newCarCost.toLocaleString('en-US', {minimumFractionDigits: 2, maximumFractionDigits: 2})}`;
+      document.getElementById('trade_in_value_display').textContent = `-$${currentTradeIn.toLocaleString('en-US', {minimumFractionDigits: 2, maximumFractionDigits: 2})}`;
+      document.getElementById('principal_financed_display').textContent = `$${adjustedPrincipal.toLocaleString('en-US', {minimumFractionDigits: 2, maximumFractionDigits: 2})}`;
+    } else {
+      tradeInBreakdown.classList.add('hidden');
+    }
 
     // Display verdict
     const verdictDiv = document.getElementById('verdict');
