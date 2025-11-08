@@ -4,6 +4,7 @@
   value = local_assigns[:value]
   hint = local_assigns[:hint]
   prepend_html = local_assigns[:prepend_html]
+  data_attributes = local_assigns[:data_attributes] || {}
 %>
 
 <div>
@@ -24,5 +25,8 @@
     placeholder="<%= placeholder %>"
     <%= "required" if required %>
     <%= "value=\"#{value}\"" if value %>
+    <% data_attributes.each do |key, val| %>
+      data-<%= key.to_s.dasherize %>="<%= val %>"
+    <% end %>
   >
 </div>

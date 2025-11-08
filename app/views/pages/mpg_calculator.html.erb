@@ -1,4 +1,6 @@
-<div class="min-h-screen bg-gradient-to-br from-blue-50 to-indigo-100 py-12 px-4 sm:px-6 lg:px-8">
+<div class="min-h-screen bg-gradient-to-br from-blue-50 to-indigo-100 py-12 px-4 sm:px-6 lg:px-8"
+     data-controller="mpg-calculator"
+     data-mpg-calculator-calculator-data-value="<%= @calculator_data.to_json %>">
   <div class="max-w-4xl mx-auto">
     <!-- Header -->
     <div class="text-center mb-8">
@@ -9,7 +11,9 @@
 
     <!-- Calculator Form -->
     <div class="bg-white rounded-lg shadow-xl p-6 md:p-8">
-      <form id="mpg-calculator-form" class="space-y-8">
+      <form data-mpg-calculator-target="form"
+            data-action="submit->mpg-calculator#submitForm"
+            class="space-y-8">
 
         <!-- Current Car Section -->
         <div class="border-b border-gray-200 pb-6">
@@ -19,31 +23,36 @@
               id: 'current_mpg',
               label: 'Current MPG',
               step: 0.1,
-              placeholder: 'e.g., 20' %>
+              placeholder: 'e.g., 20',
+              data_attributes: { 'mpg-calculator-target': 'currentMpg', action: 'input->mpg-calculator#handleInput' } %>
 
             <%= render 'number_input',
               id: 'current_gas_price',
               label: 'Gas Price ($/gallon)',
               step: 0.01,
-              placeholder: 'e.g., 3.50' %>
+              placeholder: 'e.g., 3.50',
+              data_attributes: { 'mpg-calculator-target': 'currentGasPrice', action: 'input->mpg-calculator#handleInput' } %>
 
             <%= render 'number_input',
               id: 'current_payment',
               label: 'Current Car Payment ($/month)',
               step: 0.01,
-              placeholder: 'e.g., 350' %>
+              placeholder: 'e.g., 350',
+              data_attributes: { 'mpg-calculator-target': 'currentPayment', action: 'input->mpg-calculator#handleInput' } %>
 
             <%= render 'number_input',
               id: 'current_insurance',
               label: 'Current Insurance ($/month)',
               step: 0.01,
-              placeholder: 'e.g., 150' %>
+              placeholder: 'e.g., 150',
+              data_attributes: { 'mpg-calculator-target': 'currentInsurance', action: 'input->mpg-calculator#handleInput' } %>
 
             <%= render 'number_input',
               id: 'current_maintenance',
               label: 'Current Maintenance & Repair ($/year)',
               step: 0.01,
-              placeholder: 'e.g., 2500' %>
+              placeholder: 'e.g., 2500',
+              data_attributes: { 'mpg-calculator-target': 'currentMaintenance', action: 'input->mpg-calculator#handleInput' } %>
 
             <%= render 'number_input',
               id: 'current_trade_in',
@@ -51,7 +60,8 @@
               step: 0.01,
               placeholder: 'e.g., 5000',
               required: false,
-              value: '0' %>
+              value: '0',
+              data_attributes: { 'mpg-calculator-target': 'currentTradeIn', action: 'input->mpg-calculator#handleInput' } %>
           </div>
         </div>
 
@@ -63,33 +73,38 @@
               id: 'new_mpg',
               label: 'New Car MPG',
               step: 0.1,
-              placeholder: 'e.g., 50' %>
+              placeholder: 'e.g., 50',
+              data_attributes: { 'mpg-calculator-target': 'newMpg', action: 'input->mpg-calculator#handleInput' } %>
 
             <%= render 'number_input',
               id: 'new_gas_price',
               label: 'Gas Price ($/gallon)',
               hint: '(if different octane required)',
               step: 0.01,
-              placeholder: 'e.g., 3.50' %>
+              placeholder: 'e.g., 3.50',
+              data_attributes: { 'mpg-calculator-target': 'newGasPrice', action: 'input->mpg-calculator#handleInput' } %>
 
             <%= render 'number_input',
               id: 'new_payment',
               label: 'New Car Payment ($/month)',
               step: 0.01,
               placeholder: 'e.g., 450',
-              prepend_html: '<span id="new_total_cost_estimate" class="block text-xs text-gray-500 mb-1 italic"></span>' %>
+              prepend_html: '<span data-mpg-calculator-target="newTotalCostEstimate" class="block text-xs text-gray-500 mb-1 italic"></span>',
+              data_attributes: { 'mpg-calculator-target': 'newPayment', action: 'input->mpg-calculator#handleNewPaymentInput' } %>
 
             <%= render 'number_input',
               id: 'new_insurance',
               label: 'New Insurance ($/month)',
               step: 0.01,
-              placeholder: 'e.g., 175' %>
+              placeholder: 'e.g., 175',
+              data_attributes: { 'mpg-calculator-target': 'newInsurance', action: 'input->mpg-calculator#handleInput' } %>
 
             <%= render 'number_input',
               id: 'new_maintenance',
               label: 'New Maintenance & Repair ($/year)',
               step: 0.01,
-              placeholder: 'e.g., 900' %>
+              placeholder: 'e.g., 900',
+              data_attributes: { 'mpg-calculator-target': 'newMaintenance', action: 'input->mpg-calculator#handleInput' } %>
           </div>
         </div>
 
@@ -100,14 +115,15 @@
             id: 'miles_per_month',
             label: 'Miles Driven Per Month',
             step: 1,
-            placeholder: 'e.g., 1000' %>
+            placeholder: 'e.g., 1000',
+            data_attributes: { 'mpg-calculator-target': 'milesPerMonth', action: 'input->mpg-calculator#handleInput' } %>
         </div>
 
         <!-- Calculate and Share Buttons -->
         <div class="flex justify-center gap-4">
           <button
             type="submit"
-            id="calculate-button"
+            data-mpg-calculator-target="calculateButton"
             class="bg-indigo-600 hover:bg-indigo-700 text-white font-semibold py-3 px-8 rounded-lg shadow-md transition duration-200 ease-in-out transform hover:scale-105 focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:ring-offset-2"
           >
             Calculate Savings
@@ -116,7 +132,7 @@
       </form>
 
       <!-- Results Section -->
-      <div id="results" class="hidden mt-8 pt-8 border-t border-gray-200">
+      <div data-mpg-calculator-target="results" class="hidden mt-8 pt-8 border-t border-gray-200">
         <h2 class="text-2xl font-semibold text-gray-800 mb-6 text-center">Results</h2>
 
         <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
@@ -126,23 +142,23 @@
             <div class="space-y-2 text-sm">
               <div class="flex justify-between">
                 <span class="text-gray-700">Fuel Cost:</span>
-                <span class="font-semibold text-gray-900" id="current_fuel_cost">$0.00</span>
+                <span class="font-semibold text-gray-900" data-mpg-calculator-target="currentFuelCost">$0.00</span>
               </div>
               <div class="flex justify-between">
                 <span class="text-gray-700">Car Payment:</span>
-                <span class="font-semibold text-gray-900" id="current_payment_display">$0.00</span>
+                <span class="font-semibold text-gray-900" data-mpg-calculator-target="currentPaymentDisplay">$0.00</span>
               </div>
               <div class="flex justify-between">
                 <span class="text-gray-700">Insurance:</span>
-                <span class="font-semibold text-gray-900" id="current_insurance_display">$0.00</span>
+                <span class="font-semibold text-gray-900" data-mpg-calculator-target="currentInsuranceDisplay">$0.00</span>
               </div>
               <div class="flex justify-between">
                 <span class="text-gray-700">Maintenance & Repair:</span>
-                <span class="font-semibold text-gray-900" id="current_maintenance_display">$0.00</span>
+                <span class="font-semibold text-gray-900" data-mpg-calculator-target="currentMaintenanceDisplay">$0.00</span>
               </div>
               <div class="flex justify-between pt-2 border-t border-red-300">
                 <span class="text-gray-900 font-semibold">Total:</span>
-                <span class="font-bold text-red-700 text-lg" id="current_total">$0.00</span>
+                <span class="font-bold text-red-700 text-lg" data-mpg-calculator-target="currentTotal">$0.00</span>
               </div>
             </div>
           </div>
@@ -152,528 +168,53 @@
             <h3 class="text-lg font-semibold text-green-800 mb-4">New Car (Monthly)</h3>
 
             <!-- Trade-in Breakdown (shown only if trade-in > 0) -->
-            <div id="trade_in_breakdown" class="mb-4 p-3 bg-blue-50 border border-blue-200 rounded text-sm space-y-1 hidden">
+            <div data-mpg-calculator-target="tradeInBreakdown" class="mb-4 p-3 bg-blue-50 border border-blue-200 rounded text-sm space-y-1 hidden">
               <div class="font-semibold text-blue-800 mb-2">Payment Calculation:</div>
               <div class="flex justify-between text-gray-700">
                 <span>New Car Cost:</span>
-                <span id="new_car_cost_display">$0.00</span>
+                <span data-mpg-calculator-target="newCarCostDisplay">$0.00</span>
               </div>
               <div class="flex justify-between text-gray-700">
                 <span>Trade-In Value:</span>
-                <span id="trade_in_value_display" class="text-blue-600">-$0.00</span>
+                <span data-mpg-calculator-target="tradeInValueDisplay" class="text-blue-600">-$0.00</span>
               </div>
               <div class="flex justify-between font-semibold text-gray-900 pt-1 border-t border-blue-300">
                 <span>Amount Financed:</span>
-                <span id="principal_financed_display">$0.00</span>
+                <span data-mpg-calculator-target="principalFinancedDisplay">$0.00</span>
               </div>
             </div>
 
             <div class="space-y-2 text-sm">
               <div class="flex justify-between">
                 <span class="text-gray-700">Fuel Cost:</span>
-                <span class="font-semibold text-gray-900" id="new_fuel_cost">$0.00</span>
+                <span class="font-semibold text-gray-900" data-mpg-calculator-target="newFuelCost">$0.00</span>
               </div>
               <div class="flex justify-between">
                 <span class="text-gray-700">Car Payment:</span>
-                <span class="font-semibold text-gray-900" id="new_payment_display">$0.00</span>
+                <span class="font-semibold text-gray-900" data-mpg-calculator-target="newPaymentDisplay">$0.00</span>
               </div>
               <div class="flex justify-between">
                 <span class="text-gray-700">Insurance:</span>
-                <span class="font-semibold text-gray-900" id="new_insurance_display">$0.00</span>
+                <span class="font-semibold text-gray-900" data-mpg-calculator-target="newInsuranceDisplay">$0.00</span>
               </div>
               <div class="flex justify-between">
                 <span class="text-gray-700">Maintenance & Repair:</span>
-                <span class="font-semibold text-gray-900" id="new_maintenance_display">$0.00</span>
+                <span class="font-semibold text-gray-900" data-mpg-calculator-target="newMaintenanceDisplay">$0.00</span>
               </div>
               <div class="flex justify-between pt-2 border-t border-green-300">
                 <span class="text-gray-900 font-semibold">Total:</span>
-                <span class="font-bold text-green-700 text-lg" id="new_total">$0.00</span>
+                <span class="font-bold text-green-700 text-lg" data-mpg-calculator-target="newTotal">$0.00</span>
               </div>
             </div>
           </div>
         </div>
 
         <!-- Verdict -->
-        <div id="verdict" class="mt-6 p-6 rounded-lg text-center">
-          <p class="text-2xl font-bold mb-2" id="verdict_text"></p>
-          <p class="text-lg" id="verdict_details"></p>
+        <div data-mpg-calculator-target="verdict" class="mt-6 p-6 rounded-lg text-center">
+          <p class="text-2xl font-bold mb-2" data-mpg-calculator-target="verdictText"></p>
+          <p class="text-lg" data-mpg-calculator-target="verdictDetails"></p>
         </div>
       </div>
     </div>
   </div>
 </div>
-
-<script>
-// Server-injected calculator data
-const savedCalculatorData = <%= raw @calculator_data.to_json %>;
-
-const global_rate = 7.5;
-const global_term = 60;
-
-/**
-  * Calculate the total cost of the car based on the term (in months) and the monthly amount
-  * considering the interest rate. The interest should be compounded monthly
-  *
-  * Uses present value formula: PV = PMT * ((1 - (1 + r)^-n) / r)
-  *
-  * @param {number} monthly_amount - Monthly payment amount in dollars
-  * @param {number} term - Loan term in months (default: 60)
-  * @param {number} rate - Annual interest rate as percentage (default: 7.5)
-  * @returns {number} Estimated principal/car cost in dollars
-  */
-const estimateCarCost = function(monthly_amount, term=global_term, rate=global_rate) {
-// function estimateCarCost(monthly_amount, term=global_term, rate=global_rate) {
-  // Convert annual percentage rate to monthly decimal rate
-  const monthlyRate = rate / 12 / 100;
-
-  // Handle edge case of 0% interest
-  if (monthlyRate === 0) {
-    return monthly_amount * term;
-  }
-
-  // Calculate present value (principal amount)
-  // PV = PMT * ((1 - (1 + r)^-n) / r)
-  const presentValue = monthly_amount * ((1 - Math.pow(1 + monthlyRate, -term)) / monthlyRate);
-
-  return presentValue;
-}
-
-// Parse URL parameters into calculator data structure
-function parseUrlParams(urlParams) {
-  const paramMap = {
-    // Current car parameters
-    'c_mpg': 'current_car.mpg',
-    'c_gp': 'current_car.gas_price',
-    'c_pay': 'current_car.payment',
-    'c_ins': 'current_car.insurance',
-    'c_mnt': 'current_car.maintenance',
-    'c_trade': 'current_car.trade_in',
-    // New car parameters
-    'n_mpg': 'new_car.mpg',
-    'n_gp': 'new_car.gas_price',
-    'n_pay': 'new_car.payment',
-    'n_ins': 'new_car.insurance',
-    'n_mnt': 'new_car.maintenance',
-    // Driving habits
-    'miles': 'driving_habits.miles_per_month'
-  };
-
-  const data = {
-    current_car: {},
-    new_car: {},
-    driving_habits: {}
-  };
-
-  let hasData = false;
-
-  for (const [param, path] of Object.entries(paramMap)) {
-    const value = urlParams.get(param);
-    if (value !== null && value !== '') {
-      const [section, field] = path.split('.');
-      data[section][field] = parseFloat(value);
-      hasData = true;
-    }
-  }
-
-  return hasData ? data : null;
-}
-
-// Generate shareable URL with current form values
-function generateShareableUrl() {
-  const params = new URLSearchParams();
-
-  // Current car values
-  const currentMpg = document.getElementById('current_mpg').value;
-  const currentGasPrice = document.getElementById('current_gas_price').value;
-  const currentPayment = document.getElementById('current_payment').value;
-  const currentInsurance = document.getElementById('current_insurance').value;
-  const currentMaintenance = document.getElementById('current_maintenance').value;
-  const currentTradeIn = document.getElementById('current_trade_in').value;
-
-  // New car values
-  const newMpg = document.getElementById('new_mpg').value;
-  const newGasPrice = document.getElementById('new_gas_price').value;
-  const newPayment = document.getElementById('new_payment').value;
-  const newInsurance = document.getElementById('new_insurance').value;
-  const newMaintenance = document.getElementById('new_maintenance').value;
-
-  // Driving habits
-  const milesPerMonth = document.getElementById('miles_per_month').value;
-
-  // Add parameters if they have values
-  if (currentMpg) params.set('c_mpg', currentMpg);
-  if (currentGasPrice) params.set('c_gp', currentGasPrice);
-  if (currentPayment) params.set('c_pay', currentPayment);
-  if (currentInsurance) params.set('c_ins', currentInsurance);
-  if (currentMaintenance) params.set('c_mnt', currentMaintenance);
-  if (currentTradeIn) params.set('c_trade', currentTradeIn);
-
-  if (newMpg) params.set('n_mpg', newMpg);
-  if (newGasPrice) params.set('n_gp', newGasPrice);
-  if (newPayment) params.set('n_pay', newPayment);
-  if (newInsurance) params.set('n_ins', newInsurance);
-  if (newMaintenance) params.set('n_mnt', newMaintenance);
-
-  if (milesPerMonth) params.set('miles', milesPerMonth);
-
-  // Generate full URL with parameters
-  const baseUrl = window.location.origin + window.location.pathname;
-  return baseUrl + '?' + params.toString();
-}
-
-document.addEventListener('DOMContentLoaded', function() {
-  const form = document.getElementById('mpg-calculator-form');
-  const resultsDiv = document.getElementById('results');
-  const calculateButton = document.getElementById('calculate-button');
-  const shareButton = document.getElementById('share-button');
-  const shareFeedback = document.getElementById('share-feedback');
-
-  // Track form state
-  let resultsDisplayed = false;
-  let lastCalculatedValues = null;
-
-  // Parse URL parameters for form prepopulation
-  const urlParams = new URLSearchParams(window.location.search);
-  const urlData = parseUrlParams(urlParams);
-
-  // Priority: URL params > saved session data
-  const dataToUse = (urlData && Object.keys(urlData).length > 0) ? urlData : savedCalculatorData;
-
-  // Pre-populate form with URL params or saved data
-  if (dataToUse && Object.keys(dataToUse).length > 0) {
-    populateFormFields(dataToUse);
-
-    // Auto-calculate if all fields are populated
-    if (form.checkValidity()) {
-      calculateCosts();
-    }
-  }
-
-  // Add input listeners to all form fields to detect changes
-  const formInputs = form.querySelectorAll('input[type="number"]');
-  formInputs.forEach(input => {
-    input.addEventListener('input', function() {
-      checkFormState();
-      updateShareButtonState();
-    });
-  });
-
-  form.addEventListener('submit', async function(e) {
-    e.preventDefault();
-    calculateCosts();
-
-    // Save form data to session after calculation
-    const formData = new FormData(form);
-    const formObject = Object.fromEntries(formData);
-    await saveCalculatorData(formObject);
-  });
-
-  function populateFormFields(data) {
-    // Populate current car fields
-    if (data.current_car) {
-      document.getElementById('current_mpg').value = data.current_car.mpg ?? '';
-      document.getElementById('current_gas_price').value = data.current_car.gas_price ?? '';
-      document.getElementById('current_payment').value = data.current_car.payment ?? '';
-      document.getElementById('current_insurance').value = data.current_car.insurance ?? '';
-      document.getElementById('current_maintenance').value = data.current_car.maintenance ?? '';
-      document.getElementById('current_trade_in').value = data.current_car.trade_in ?? '0';
-    }
-
-    // Populate new car fields
-    if (data.new_car) {
-      document.getElementById('new_mpg').value = data.new_car.mpg ?? '';
-      document.getElementById('new_gas_price').value = data.new_car.gas_price ?? '';
-      document.getElementById('new_payment').value = data.new_car.payment ?? '';
-      document.getElementById('new_insurance').value = data.new_car.insurance ?? '';
-      document.getElementById('new_maintenance').value = data.new_car.maintenance ?? '';
-    }
-
-    // Populate driving habits fields
-    if (data.driving_habits) {
-      document.getElementById('miles_per_month').value = data.driving_habits.miles_per_month ?? '';
-    }
-  }
-
-  async function saveCalculatorData(formData) {
-    const metaPayload = {
-      session: {
-        meta: {
-          mpg_calculator: {
-            current_car: {
-              mpg: parseFloat(formData.current_mpg),
-              gas_price: parseFloat(formData.current_gas_price),
-              payment: parseFloat(formData.current_payment),
-              insurance: parseFloat(formData.current_insurance),
-              maintenance: parseFloat(formData.current_maintenance),
-              trade_in: parseFloat(formData.current_trade_in) || 0
-            },
-            new_car: {
-              mpg: parseFloat(formData.new_mpg),
-              gas_price: parseFloat(formData.new_gas_price),
-              payment: parseFloat(formData.new_payment),
-              insurance: parseFloat(formData.new_insurance),
-              maintenance: parseFloat(formData.new_maintenance)
-            },
-            driving_habits: {
-              miles_per_month: parseInt(formData.miles_per_month)
-            },
-            last_calculated_at: new Date().toISOString()
-          }
-        }
-      }
-    };
-
-    try {
-      // Get session ID from index endpoint
-      const indexResponse = await fetch('/sessions', {
-        method: 'GET',
-        headers: { 'Accept': 'application/json' }
-      });
-
-      if (!indexResponse.ok) {
-        throw new Error(`Failed to get session ID: ${indexResponse.status}`);
-      }
-
-      const sessionData = await indexResponse.json();
-      const sessionId = sessionData.id;
-
-      // Now update with calculator data using the actual session ID
-      const response = await fetch(`/sessions/${sessionId}`, {
-        method: 'PATCH',
-        headers: {
-          'Content-Type': 'application/json',
-          'Accept': 'application/json'
-        },
-        body: JSON.stringify(metaPayload)
-      });
-
-      if (!response.ok) {
-        throw new Error(`HTTP error! status: ${response.status}`);
-      }
-
-      console.log('Calculator data saved successfully');
-    } catch (error) {
-      console.error('Failed to save calculator data:', error);
-    }
-  }
-
-
-  /**
-   * Calculate the monthly payment based on the principal (car cost)
-   * considering the interest rate and loan term.
-   *
-   * Uses payment formula: PMT = PV * (r / (1 - (1 + r)^-n))
-   *
-   * @param {number} principal - Principal/car cost in dollars
-   * @param {number} term - Loan term in months (default: 60)
-   * @param {number} rate - Annual interest rate as percentage (default: 7.5)
-   * @returns {number} Monthly payment amount in dollars
-   */
-  function calculateMonthlyPayment(principal, term=global_term, rate=global_rate) {
-    // Convert annual percentage rate to monthly decimal rate
-    const monthlyRate = rate / 12 / 100;
-
-    // Handle edge case of 0% interest
-    if (monthlyRate === 0) {
-      return principal / term;
-    }
-
-    // Calculate monthly payment
-    // PMT = PV * (r / (1 - (1 + r)^-n))
-    const monthlyPayment = principal * (monthlyRate / (1 - Math.pow(1 + monthlyRate, -term)));
-
-    return monthlyPayment;
-  }
-
-  // update cost estimate when monthly payment changes
-  const new_payment_input = document.querySelector('#new_payment');
-
-  function updateTotalCostEstimate(value) {
-    if (value <= 0) return;
-
-    let total_cost = Math.round(estimateCarCost(value));
-    let total_cost_fmt = `$${total_cost.toLocaleString('en-US')} estimated total (${global_term}mos @ %${global_rate})`;
-
-    document.querySelector('#new_total_cost_estimate').innerText = total_cost_fmt;
-  }
-
-  updateTotalCostEstimate(new_payment_input.value ?? 0);
-
-  new_payment_input.addEventListener('keyup', function(event) {
-    let { value } = event.target;
-
-    updateTotalCostEstimate(value);
-  });
-
-  function checkFormState() {
-    if (!resultsDisplayed || !lastCalculatedValues) {
-      // No results displayed yet, keep button enabled
-      enableButton();
-      return;
-    }
-
-    // Get current form values
-    const currentValues = {
-      current_mpg: parseFloat(document.getElementById('current_mpg').value) || 0,
-      current_gas_price: parseFloat(document.getElementById('current_gas_price').value) || 0,
-      current_payment: parseFloat(document.getElementById('current_payment').value) || 0,
-      current_insurance: parseFloat(document.getElementById('current_insurance').value) || 0,
-      current_maintenance: parseFloat(document.getElementById('current_maintenance').value) || 0,
-      current_trade_in: parseFloat(document.getElementById('current_trade_in').value) || 0,
-      new_mpg: parseFloat(document.getElementById('new_mpg').value) || 0,
-      new_gas_price: parseFloat(document.getElementById('new_gas_price').value) || 0,
-      new_payment: parseFloat(document.getElementById('new_payment').value) || 0,
-      new_insurance: parseFloat(document.getElementById('new_insurance').value) || 0,
-      new_maintenance: parseFloat(document.getElementById('new_maintenance').value) || 0,
-      miles_per_month: parseFloat(document.getElementById('miles_per_month').value) || 0
-    };
-
-    // Compare current values with last calculated values
-    const valuesMatch = Object.keys(currentValues).every(key => {
-      return currentValues[key] === lastCalculatedValues[key];
-    });
-
-    // Disable button if values match (results are current), enable if they don't match
-    if (valuesMatch) {
-      disableButton();
-    } else {
-      enableButton();
-    }
-  }
-
-  function disableButton() {
-    calculateButton.disabled = true;
-    calculateButton.classList.remove('bg-indigo-600', 'hover:bg-indigo-700', 'hover:scale-105');
-    calculateButton.classList.add('bg-gray-500', 'cursor-not-allowed');
-    calculateButton.style.backgroundColor = '#6b7280'; // gray-500
-    calculateButton.style.opacity = '0.8';
-  }
-
-  function enableButton() {
-    calculateButton.disabled = false;
-    calculateButton.classList.remove('bg-gray-500', 'cursor-not-allowed');
-    calculateButton.classList.add('bg-indigo-600', 'hover:bg-indigo-700', 'hover:scale-105');
-    calculateButton.style.backgroundColor = '';
-    calculateButton.style.opacity = '';
-  }
-
-  function calculateCosts() {
-    // Get form values
-    const currentMpg = parseFloat(document.getElementById('current_mpg').value);
-    const currentGasPrice = parseFloat(document.getElementById('current_gas_price').value);
-    const currentPayment = parseFloat(document.getElementById('current_payment').value);
-    const currentInsurance = parseFloat(document.getElementById('current_insurance').value);
-    const currentMaintenanceAnnual = parseFloat(document.getElementById('current_maintenance').value);
-    const currentTradeIn = parseFloat(document.getElementById('current_trade_in').value) || 0;
-
-    const newMpg = parseFloat(document.getElementById('new_mpg').value);
-    const newGasPrice = parseFloat(document.getElementById('new_gas_price').value);
-    const newPayment = parseFloat(document.getElementById('new_payment').value);
-    const newInsurance = parseFloat(document.getElementById('new_insurance').value);
-    const newMaintenanceAnnual = parseFloat(document.getElementById('new_maintenance').value);
-
-    const milesPerMonth = parseFloat(document.getElementById('miles_per_month').value);
-
-    // Calculate adjusted new car payment based on trade-in
-    // First estimate the new car's total cost from the payment
-    const newCarCost = estimateCarCost(newPayment);
-    // Subtract trade-in value from principal
-    const adjustedPrincipal = newCarCost - currentTradeIn;
-    // Calculate new monthly payment based on reduced principal
-    const adjustedNewPayment = adjustedPrincipal > 0 ? calculateMonthlyPayment(adjustedPrincipal) : 0;
-
-    // Store the calculated values for comparison
-    lastCalculatedValues = {
-      current_mpg: currentMpg,
-      current_gas_price: currentGasPrice,
-      current_payment: currentPayment,
-      current_insurance: currentInsurance,
-      current_maintenance: currentMaintenanceAnnual,
-      current_trade_in: currentTradeIn,
-      new_mpg: newMpg,
-      new_gas_price: newGasPrice,
-      new_payment: newPayment,
-      new_insurance: newInsurance,
-      new_maintenance: newMaintenanceAnnual,
-      miles_per_month: milesPerMonth
-    };
-
-    // Calculate fuel costs
-    const currentFuelCost = (milesPerMonth / currentMpg) * currentGasPrice;
-    const newFuelCost = (milesPerMonth / newMpg) * newGasPrice;
-
-    // Convert annual maintenance to monthly
-    const currentMaintenance = currentMaintenanceAnnual / 12;
-    const newMaintenance = newMaintenanceAnnual / 12;
-
-    // Calculate totals (use adjusted payment for new car)
-    const currentTotal = currentFuelCost + currentPayment + currentInsurance + currentMaintenance;
-    const newTotal = newFuelCost + adjustedNewPayment + newInsurance + newMaintenance;
-
-    // Calculate difference
-    const difference = currentTotal - newTotal;
-
-    // Display results
-    document.getElementById('current_fuel_cost').textContent = `$${currentFuelCost.toFixed(2)}`;
-    document.getElementById('current_payment_display').textContent = `$${currentPayment.toFixed(2)}`;
-    document.getElementById('current_insurance_display').textContent = `$${currentInsurance.toFixed(2)}`;
-    document.getElementById('current_maintenance_display').textContent = `$${currentMaintenance.toFixed(2)}`;
-    document.getElementById('current_total').textContent = `$${currentTotal.toFixed(2)}`;
-
-    document.getElementById('new_fuel_cost').textContent = `$${newFuelCost.toFixed(2)}`;
-    document.getElementById('new_payment_display').textContent = `$${adjustedNewPayment.toFixed(2)}`;
-    document.getElementById('new_insurance_display').textContent = `$${newInsurance.toFixed(2)}`;
-    document.getElementById('new_maintenance_display').textContent = `$${newMaintenance.toFixed(2)}`;
-    document.getElementById('new_total').textContent = `$${newTotal.toFixed(2)}`;
-
-    // Display trade-in breakdown if there's a trade-in value
-    const tradeInBreakdown = document.getElementById('trade_in_breakdown');
-    if (currentTradeIn > 0) {
-      tradeInBreakdown.classList.remove('hidden');
-      document.getElementById('new_car_cost_display').textContent = `$${newCarCost.toLocaleString('en-US', {minimumFractionDigits: 2, maximumFractionDigits: 2})}`;
-      document.getElementById('trade_in_value_display').textContent = `-$${currentTradeIn.toLocaleString('en-US', {minimumFractionDigits: 2, maximumFractionDigits: 2})}`;
-      document.getElementById('principal_financed_display').textContent = `$${adjustedPrincipal.toLocaleString('en-US', {minimumFractionDigits: 2, maximumFractionDigits: 2})}`;
-    } else {
-      tradeInBreakdown.classList.add('hidden');
-    }
-
-    // Display verdict
-    const verdictDiv = document.getElementById('verdict');
-    const verdictText = document.getElementById('verdict_text');
-    const verdictDetails = document.getElementById('verdict_details');
-
-    if (difference > 0) {
-      verdictDiv.className = 'mt-6 p-6 rounded-lg text-center bg-green-100 border-2 border-green-400';
-      verdictText.className = 'text-2xl font-bold mb-2 text-green-800';
-      verdictText.textContent = `You'll SAVE $${Math.abs(difference).toFixed(2)} per month! 💰`;
-      verdictDetails.className = 'text-lg text-green-700';
-      verdictDetails.textContent = `That's $${(Math.abs(difference) * 12).toFixed(2)} per year in savings.`;
-    } else if (difference < 0) {
-      verdictDiv.className = 'mt-6 p-6 rounded-lg text-center bg-red-100 border-2 border-red-400';
-      verdictText.className = 'text-2xl font-bold mb-2 text-red-800';
-      verdictText.textContent = `You'll LOSE $${Math.abs(difference).toFixed(2).toLocaleString('en-US')} per month! ⚠️`;
-      verdictDetails.className = 'text-lg text-red-700';
-      verdictDetails.textContent = `The new car will cost you $${(Math.abs(difference) * 12).toFixed(2).toLocaleString('en-US')} more per year.`;
-    } else {
-      verdictDiv.className = 'mt-6 p-6 rounded-lg text-center bg-gray-100 border-2 border-gray-400';
-      verdictText.className = 'text-2xl font-bold mb-2 text-gray-800';
-      verdictText.textContent = `Break Even`;
-      verdictDetails.className = 'text-lg text-gray-700';
-      verdictDetails.textContent = `Both cars cost the same per month.`;
-    }
-
-    // Show results
-    resultsDiv.classList.remove('hidden');
-    resultsDiv.scrollIntoView({ behavior: 'smooth', block: 'nearest' });
-
-    // Mark results as displayed and update button state
-    resultsDisplayed = true;
-    checkFormState();
-
-    // Update URL with current form values for easy sharing
-    const shareableUrl = generateShareableUrl();
-    const urlParams = new URLSearchParams(new URL(shareableUrl).search);
-    window.history.replaceState({}, '', '?' + urlParams.toString());
-  }
-});
-</script>
