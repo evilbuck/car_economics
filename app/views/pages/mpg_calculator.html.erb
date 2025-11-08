@@ -15,101 +15,43 @@
         <div class="border-b border-gray-200 pb-6">
           <h2 class="text-2xl font-semibold text-gray-800 mb-4">Current Car</h2>
           <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
-            <div>
-              <label for="current_mpg" class="block text-sm font-medium text-gray-700 mb-2">
-                Current MPG
-              </label>
-              <input
-                type="number"
-                id="current_mpg"
-                name="current_mpg"
-                step="0.1"
-                min="0"
-                class="w-full px-4 py-2 border border-gray-300 rounded-md shadow-sm focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500"
-                placeholder="e.g., 20"
-                required
-              >
-            </div>
+            <%= render 'number_input',
+              id: 'current_mpg',
+              label: 'Current MPG',
+              step: 0.1,
+              placeholder: 'e.g., 20' %>
 
-            <div>
-              <label for="current_gas_price" class="block text-sm font-medium text-gray-700 mb-2">
-                Gas Price ($/gallon)
-              </label>
-              <input
-                type="number"
-                id="current_gas_price"
-                name="current_gas_price"
-                step="0.01"
-                min="0"
-                class="w-full px-4 py-2 border border-gray-300 rounded-md shadow-sm focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500"
-                placeholder="e.g., 3.50"
-                required
-              >
-            </div>
+            <%= render 'number_input',
+              id: 'current_gas_price',
+              label: 'Gas Price ($/gallon)',
+              step: 0.01,
+              placeholder: 'e.g., 3.50' %>
 
-            <div>
-              <label for="current_payment" class="block text-sm font-medium text-gray-700 mb-2">
-                Current Car Payment ($/month)
-              </label>
-              <input
-                type="number"
-                id="current_payment"
-                name="current_payment"
-                step="0.01"
-                min="0"
-                class="w-full px-4 py-2 border border-gray-300 rounded-md shadow-sm focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500"
-                placeholder="e.g., 350"
-                required
-              >
-            </div>
+            <%= render 'number_input',
+              id: 'current_payment',
+              label: 'Current Car Payment ($/month)',
+              step: 0.01,
+              placeholder: 'e.g., 350' %>
 
-            <div>
-              <label for="current_insurance" class="block text-sm font-medium text-gray-700 mb-2">
-                Current Insurance ($/month)
-              </label>
-              <input
-                type="number"
-                id="current_insurance"
-                name="current_insurance"
-                step="0.01"
-                min="0"
-                class="w-full px-4 py-2 border border-gray-300 rounded-md shadow-sm focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500"
-                placeholder="e.g., 150"
-                required
-              >
-            </div>
+            <%= render 'number_input',
+              id: 'current_insurance',
+              label: 'Current Insurance ($/month)',
+              step: 0.01,
+              placeholder: 'e.g., 150' %>
 
-            <div>
-              <label for="current_maintenance" class="block text-sm font-medium text-gray-700 mb-2">
-                Current Maintenance & Repair ($/year)
-              </label>
-              <input
-                type="number"
-                id="current_maintenance"
-                name="current_maintenance"
-                step="0.01"
-                min="0"
-                class="w-full px-4 py-2 border border-gray-300 rounded-md shadow-sm focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500"
-                placeholder="e.g., 2500"
-                required
-              >
-            </div>
+            <%= render 'number_input',
+              id: 'current_maintenance',
+              label: 'Current Maintenance & Repair ($/year)',
+              step: 0.01,
+              placeholder: 'e.g., 2500' %>
 
-            <div>
-              <label for="current_trade_in" class="block text-sm font-medium text-gray-700 mb-2">
-                Estimated Trade-In/Sale Price ($)
-              </label>
-              <input
-                type="number"
-                id="current_trade_in"
-                name="current_trade_in"
-                step="0.01"
-                min="0"
-                class="w-full px-4 py-2 border border-gray-300 rounded-md shadow-sm focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500"
-                placeholder="e.g., 5000"
-                value="0"
-              >
-            </div>
+            <%= render 'number_input',
+              id: 'current_trade_in',
+              label: 'Estimated Trade-In/Sale Price ($)',
+              step: 0.01,
+              placeholder: 'e.g., 5000',
+              required: false,
+              value: '0' %>
           </div>
         </div>
 
@@ -117,108 +59,48 @@
         <div class="border-b border-gray-200 pb-6">
           <h2 class="text-2xl font-semibold text-gray-800 mb-4">New Car</h2>
           <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
-            <div>
-              <label for="new_mpg" class="block text-sm font-medium text-gray-700 mb-2">
-                New Car MPG
-              </label>
-              <input
-                type="number"
-                id="new_mpg"
-                name="new_mpg"
-                step="0.1"
-                min="0"
-                class="w-full px-4 py-2 border border-gray-300 rounded-md shadow-sm focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500"
-                placeholder="e.g., 50"
-                required
-              >
-            </div>
+            <%= render 'number_input',
+              id: 'new_mpg',
+              label: 'New Car MPG',
+              step: 0.1,
+              placeholder: 'e.g., 50' %>
 
-            <div>
-              <label for="new_gas_price" class="block text-sm font-medium text-gray-700 mb-2">
-                Gas Price ($/gallon)
-                <span class="text-xs text-gray-500">(if different octane required)</span>
-              </label>
-              <input
-                type="number"
-                id="new_gas_price"
-                name="new_gas_price"
-                step="0.01"
-                min="0"
-                class="w-full px-4 py-2 border border-gray-300 rounded-md shadow-sm focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500"
-                placeholder="e.g., 3.50"
-                required
-              >
-            </div>
+            <%= render 'number_input',
+              id: 'new_gas_price',
+              label: 'Gas Price ($/gallon)',
+              hint: '(if different octane required)',
+              step: 0.01,
+              placeholder: 'e.g., 3.50' %>
 
-            <div>
-              <label for="new_payment" class="block text-sm font-medium text-gray-700 mb-2">
-                New Car Payment ($/month)
-              </label>
-              <span id="new_total_cost_estimate" class="block text-xs text-gray-500 mb-1 italic"></span>
-              <input
-                type="number"
-                id="new_payment"
-                name="new_payment"
-                step="0.01"
-                min="0"
-                class="w-full px-4 py-2 border border-gray-300 rounded-md shadow-sm focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500"
-                placeholder="e.g., 450"
-                required
-              >
-            </div>
+            <%= render 'number_input',
+              id: 'new_payment',
+              label: 'New Car Payment ($/month)',
+              step: 0.01,
+              placeholder: 'e.g., 450',
+              prepend_html: '<span id="new_total_cost_estimate" class="block text-xs text-gray-500 mb-1 italic"></span>' %>
 
-            <div>
-              <label for="new_insurance" class="block text-sm font-medium text-gray-700 mb-2">
-                New Insurance ($/month)
-              </label>
-              <input
-                type="number"
-                id="new_insurance"
-                name="new_insurance"
-                step="0.01"
-                min="0"
-                class="w-full px-4 py-2 border border-gray-300 rounded-md shadow-sm focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500"
-                placeholder="e.g., 175"
-                required
-              >
-            </div>
+            <%= render 'number_input',
+              id: 'new_insurance',
+              label: 'New Insurance ($/month)',
+              step: 0.01,
+              placeholder: 'e.g., 175' %>
 
-            <div>
-              <label for="new_maintenance" class="block text-sm font-medium text-gray-700 mb-2">
-                New Maintenance & Repair ($/year)
-              </label>
-              <input
-                type="number"
-                id="new_maintenance"
-                name="new_maintenance"
-                step="0.01"
-                min="0"
-                class="w-full px-4 py-2 border border-gray-300 rounded-md shadow-sm focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500"
-                placeholder="e.g., 900"
-                required
-              >
-            </div>
+            <%= render 'number_input',
+              id: 'new_maintenance',
+              label: 'New Maintenance & Repair ($/year)',
+              step: 0.01,
+              placeholder: 'e.g., 900' %>
           </div>
         </div>
 
         <!-- Driving Habits Section -->
         <div>
           <h2 class="text-2xl font-semibold text-gray-800 mb-4">Your Driving Habits</h2>
-          <div>
-            <label for="miles_per_month" class="block text-sm font-medium text-gray-700 mb-2">
-              Miles Driven Per Month
-            </label>
-            <input
-              type="number"
-              id="miles_per_month"
-              name="miles_per_month"
-              step="1"
-              min="0"
-              class="w-full px-4 py-2 border border-gray-300 rounded-md shadow-sm focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500"
-              placeholder="e.g., 1000"
-              required
-            >
-          </div>
+          <%= render 'number_input',
+            id: 'miles_per_month',
+            label: 'Miles Driven Per Month',
+            step: 1,
+            placeholder: 'e.g., 1000' %>
         </div>
 
         <!-- Calculate and Share Buttons -->
