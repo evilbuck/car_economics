@@ -1,3 +1,62 @@
+<% content_for :head do %>
+  <script type="application/ld+json">
+  {
+    "@context": "https://schema.org",
+    "@type": "WebApplication",
+    "name": "MPG Calculator",
+    "description": "Free online calculator to compare car costs including fuel savings, payments, insurance, and maintenance to determine if upgrading your car is financially worth it.",
+    "url": "<%= request.original_url %>",
+    "applicationCategory": "FinanceApplication",
+    "operatingSystem": "Any",
+    "offers": {
+      "@type": "Offer",
+      "price": "0",
+      "priceCurrency": "USD"
+    },
+    "featureList": [
+      "Compare current vs new car costs",
+      "Calculate fuel savings based on MPG",
+      "Factor in monthly payments and insurance",
+      "Include maintenance and repair costs",
+      "Consider trade-in value",
+      "Get instant cost comparison results"
+    ]
+  }
+  </script>
+  <script type="application/ld+json">
+  {
+    "@context": "https://schema.org",
+    "@type": "FAQPage",
+    "mainEntity": [
+      {
+        "@type": "Question",
+        "name": "How does the MPG calculator work?",
+        "acceptedAnswer": {
+          "@type": "Answer",
+          "text": "The MPG calculator compares your current car's total monthly costs (fuel, payment, insurance, maintenance) with a new car's costs to help you determine if upgrading is financially beneficial. It factors in fuel efficiency (MPG), gas prices, monthly payments, insurance rates, and annual maintenance costs."
+        }
+      },
+      {
+        "@type": "Question",
+        "name": "What factors are included in the car cost comparison?",
+        "acceptedAnswer": {
+          "@type": "Answer",
+          "text": "The calculator includes: fuel costs based on MPG and gas prices, monthly car payments, monthly insurance premiums, annual maintenance and repair costs, and optional trade-in value to calculate the net cost difference between your current and new car."
+        }
+      },
+      {
+        "@type": "Question",
+        "name": "Is the MPG calculator free to use?",
+        "acceptedAnswer": {
+          "@type": "Answer",
+          "text": "Yes, the MPG calculator is completely free to use with no registration required. You can perform unlimited calculations and share your results."
+        }
+      }
+    ]
+  }
+  </script>
+<% end %>
+
 <div class="min-h-screen bg-gradient-to-br from-blue-50 to-indigo-100 py-12 px-4 sm:px-6 lg:px-8"
      data-controller="mpg-calculator"
      data-mpg-calculator-calculator-data-value="<%= @calculator_data.to_json %>">
