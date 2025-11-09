@@ -90,6 +90,9 @@ export default class extends Controller {
     event.preventDefault()
     this.calculateCosts()
 
+    // Track calculate button press in Google Analytics
+    this.trackCalculateEvent()
+
     // Save form data to session after calculation
     const formData = new FormData(this.formTarget)
     const formObject = Object.fromEntries(formData)
@@ -497,5 +500,65 @@ export default class extends Controller {
     const shareableUrl = this.generateShareableUrl()
     const urlParams = new URLSearchParams(new URL(shareableUrl).search)
     window.history.replaceState({}, '', '?' + urlParams.toString())
+  }
+
+  trackCalculateEvent() {
+    // Check if gtag is available (Google Analytics is loaded)
+    if (typeof gtag !== 'function') {
+      console.log('Google Analytics not loaded, skipping event tracking')
+      return
+    }
+
+    // Get the calculated difference from the last calculated values
+    const currentMpg = parseFloat(this.currentMpgTarget.value)
+    const currentGasPrice = parseFloat(this.currentGasPriceTarget.value)
+    const currentPayment = parseFloat(this.currentPaymentTarget.value)
+    const currentInsurance = parseFloat(this.currentInsuranceTarget.value)
+    const currentMaintenanceAnnual = parseFloat(this.currentMaintenanceTarget.value)
+    const currentTradeIn = parseFloat(this.currentTradeInTarget.value) || 0
+
+    const newMpg = parseFloat(this.newMpgTarget.value)
+    const newGasPrice = parseFloat(this.newGasPriceTarget.value)
+    const newPayment = parseFloat(this.newPaymentTarget.value)
+    const newInsurance = parseFloat(this.newInsuranceTarget.value)
+    const newMaintenanceAnnual = parseFloat(this.newMaintenanceTarget.value)
+
+    const milesPerMonth = parseFloat(this.milesPerMonthTarget.value)
+
+    // Calculate fuel costs
+    const currentFuelCost = (milesPerMonth / currentMpg) * currentGasPrice
+    const newFuelCost = (milesPerMonth / newMpg) * newGasPrice
+
+    // Convert annual maintenance to monthly
+    const currentMaintenance = currentMaintenanceAnnual / 12
+    const newMaintenance = newMaintenanceAnnual / 12
+
+    // Adjust new payment for trade-in
+    const newCarCost = this.estimateCarCost(newPayment)
+    const adjustedPrincipal = newCarCost - currentTradeIn
+    const adjustedNewPayment = adjustedPrincipal > 0 ? this.calculateMonthlyPayment(adjustedPrincipal) : 0
+
+    // Calculate totals
+    const currentTotal = currentFuelCost + currentPayment + currentInsurance + currentMaintenance
+    const newTotal = newFuelCost + adjustedNewPayment + newInsurance + newMaintenance
+
+    // Calculate difference
+    const monthlySavings = currentTotal - newTotal
+
+    // Track the event with relevant parameters
+    gtag('event', 'calculate_mpg', {
+      'event_category': 'MPG Calculator',
+      'event_label': monthlySavings > 0 ? 'Savings' : (monthlySavings < 0 ? 'Loss' : 'Break Even'),
+      'value': Math.round(Math.abs(monthlySavings)),
+      'monthly_savings': Math.round(monthlySavings * 100) / 100,
+      'current_mpg': currentMpg,
+      'new_mpg': newMpg,
+      'miles_per_month': milesPerMonth,
+      'has_trade_in': currentTradeIn > 0
+    })
+
+    console.log('Google Analytics event tracked: calculate_mpg', {
+      monthly_savings: Math.round(monthlySavings * 100) / 100
+    })
   }
 }
